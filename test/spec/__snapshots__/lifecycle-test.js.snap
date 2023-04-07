@@ -12,6 +12,7 @@ exports[`Lifecycle tests <GridItem > Basic Render 1`] = `
     ]
   }
   containerWidth={1200}
+  group=""
   h={100}
   handle=""
   i="0"
@@ -761,6 +762,7 @@ exports[`Lifecycle tests <ReactGridLayout> Basic Render 1`] = `
       onResizeStart={[Function]}
       onResizeStop={[Function]}
       preventCollision={false}
+      preventOverlapInGroups={false}
       resizeHandles={
         Array [
           "se",
@@ -4843,6 +4845,7 @@ exports[`Lifecycle tests <ReactGridLayout> WidthProvider Renders with WidthProvi
       onResizeStart={[Function]}
       onResizeStop={[Function]}
       preventCollision={false}
+      preventOverlapInGroups={false}
       resizeHandles={
         Array [
           "se",
@@ -8520,6 +8523,7 @@ exports[`Lifecycle tests <ReactGridLayout> data-grid Creates layout based on pro
   onResizeStart={[Function]}
   onResizeStop={[Function]}
   preventCollision={false}
+  preventOverlapInGroups={false}
   resizeHandles={
     Array [
       "se",
@@ -9110,6 +9114,7 @@ exports[`Lifecycle tests <ReactGridLayout> data-grid Null items in list 1`] = `
   onResizeStart={[Function]}
   onResizeStop={[Function]}
   preventCollision={false}
+  preventOverlapInGroups={false}
   resizeHandles={
     Array [
       "se",
@@ -11144,6 +11149,7 @@ exports[`Lifecycle tests <ResponsiveReactGridLayout> Basic Render 1`] = `
           onResizeStart={[Function]}
           onResizeStop={[Function]}
           preventCollision={false}
+          preventOverlapInGroups={false}
           resizeHandles={
             Array [
               "se",

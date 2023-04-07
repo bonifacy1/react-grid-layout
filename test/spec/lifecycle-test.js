@@ -50,7 +50,8 @@ describe("Lifecycle tests", function () {
       isDraggable: false,
       isResizable: false,
       isBounded: false,
-      useCSSTransforms: false
+      useCSSTransforms: false,
+      group: ""
     };
     it("Basic Render", () => {
       const wrapper = mount(<GridItem {...mockProps} />);

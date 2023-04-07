@@ -12,6 +12,7 @@ import {
   fastRGLPropsEqual,
   getAllCollisions,
   getLayoutItem,
+  getSameGroupCollision,
   moveElement,
   noop,
   synchronizeLayoutWithChildren,
@@ -95,6 +96,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     isDraggable: true,
     isResizable: true,
     allowOverlap: false,
+    preventOverlapInGroups: false,
     isDroppable: false,
     useCSSTransforms: true,
     transformScale: 1,
@@ -274,7 +276,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
   ) => {
     const { oldDragItem } = this.state;
     let { layout } = this.state;
-    const { cols, allowOverlap, preventCollision } = this.props;
+    const { cols, allowOverlap, preventCollision, preventOverlapInGroups } = this.props;
     const l = getLayoutItem(layout, i);
     if (!l) return;
 
@@ -299,7 +301,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       preventCollision,
       compactType(this.props),
       cols,
-      allowOverlap
+      allowOverlap,
+      preventOverlapInGroups,
     );
 
     this.props.onDrag(layout, oldDragItem, l, placeholder, e, node);
@@ -330,7 +333,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
 
     const { oldDragItem } = this.state;
     let { layout } = this.state;
-    const { cols, preventCollision, allowOverlap } = this.props;
+    const { cols, preventCollision, allowOverlap, preventOverlapInGroups } = this.props;
     const l = getLayoutItem(layout, i);
     if (!l) return;
 
@@ -345,7 +348,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       preventCollision,
       compactType(this.props),
       cols,
-      allowOverlap
+      allowOverlap,
+      preventOverlapInGroups
     );
 
     this.props.onDragStop(layout, oldDragItem, l, null, e, node);
@@ -398,8 +402,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     { e, node }
   ) => {
     const { layout, oldResizeItem } = this.state;
-    const { cols, preventCollision, allowOverlap } = this.props;
-
+    const { cols, preventCollision, allowOverlap, preventOverlapInGroups } = this.props;
     const [newLayout, l] = withLayoutItem(layout, i, l => {
       // Something like quad tree should be used
       // to find collisions faster
@@ -424,6 +427,27 @@ export default class ReactGridLayout extends React.Component<Props, State> {
           if (Number.isFinite(leastY)) l.h = leastY - l.y;
         }
       }
+      if (preventCollision && allowOverlap && preventOverlapInGroups) {
+        const collisions = getAllCollisions(layout, { ...l, w, h }).filter(
+          layoutItem => layoutItem.i !== l.i
+        );
+        const hasSameGroupCollision = getSameGroupCollision(collisions, l)
+        hasCollisions = hasSameGroupCollision;
+
+        // If we're colliding, we need adjust the placeholder.
+        if (!hasSameGroupCollision) {
+          // adjust w && h to maximum allowed space
+          let leastX = Infinity,
+            leastY = Infinity;
+          collisions.forEach(layoutItem => {
+            if (layoutItem.x > l.x) leastX = Math.min(leastX, layoutItem.x);
+            if (layoutItem.y > l.y) leastY = Math.min(leastY, layoutItem.y);
+          });
+
+          if (Number.isFinite(leastX)) l.w = leastX - l.x;
+          if (Number.isFinite(leastY)) l.h = leastY - l.y;
+        }
+       }
 
       if (!hasCollisions) {
         // Set new width and height.
